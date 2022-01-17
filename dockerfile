@@ -16,4 +16,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 80
-CMD [ "node", "index" ]
+CMD [ "node", "./src/index" ]
