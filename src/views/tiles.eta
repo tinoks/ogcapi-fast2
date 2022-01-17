@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Tiles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+</head>
+
+<body class="bg-neutral-800 text-neutral-400">
+  <header class="flex text-xs items-center justify-between">
+    <div id="breadcrumbs" class="flex cursor-pointer opacity-20 hover:opacity-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 py-0.5	" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      </svg>
+      <a class="hover:text-neutral-100" href="/">home</a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+      <a class="hover:text-neutral-100" href="/collections">collections</a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+      <a class="hover:text-neutral-100" href="/collections/<%= it.collectionId %>">
+        <%= it.collectionId %>
+      </a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+
+      <a class="cursor-default">tiles</a>
+    </div>
+    <a class="hover:text-neutral-300 px-1 opacity-20 hover:opacity-100 transition" href="?f=json" target="_blank">JSON</a>
+  </header>
+
+  <div id="content" class="p-5">
+
+    <h1 class="text-4xl mb-2.5">
+      Tiles
+    </h1>
+
+    <div class="flex my-3">
+      <div class="basis-1/4 font-bold">Tile Matrix Set</div>
+      <div class="basis-3/4">
+        <select name="TileMatrixSet" id="TileMatrixSet" class="text-neutral-900">
+          <option value="WebMercatorQuad">WebMercatorQuad</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex my-3">
+      <div class="basis-1/4 font-bold">URL template</div>
+      <div class="basis-3/4">
+        <%= it.baseurl %>/collections/<%= it.collectionId %>/tiles/WebMercatorQuad/{z}/{x}/{y}
+      </div>
+    </div>
+
+    <div class="flex my-3">
+      <div class="basis-1/4 font-bold">Metadata</div>
+      <a class="basis-3/4 text-neutral-100 hover:underline" target="_blank" href="/collections/<%= it.collectionId %>/tiles/WebMercatorQuad?f=tilejson">
+        Metadata for these tiles in the TileJSON format
+      </a>
+    </div>
+
+    <div class="flex my-3">
+      <div class="basis-1/4 font-bold">Tiles</div>
+      <div class="basis-3/4 h-96" id="map"></div>
+    </div>
+    <br>
+
+
+  </div>
+
+  <script>
+
+    let map = new maplibregl.Map({
+      container: 'map', // container id
+      center: [
+      10.438965000000001,
+      55.7338125
+      ],
+      zoom: 9,
+      style: {
+        "version": 8,
+        "name": "Empty",
+        "metadata": {
+          "mapbox:autocomposite": true,
+          "mapbox:type": "template"
+        },
+        "sources": {
+          "collection-tiles": {
+            "type": "raster",
+            "bounds": [
+              3.32016,
+              53.113655,
+              17.55777,
+              58.35397
+            ],
+            "tiles": [
+              "http://127.0.0.1:3000/collections/GEODK_ORTOFOTO_2020/tiles/webmercator/{z}/{x}/{y}"
+            ],
+            "tileSize": 256,
+            "scheme": "xyz",
+            "minzoom": 0,
+            "maxzoom": 18
+          }
+        },
+        "layers": [
+          {
+            "id": "background",
+            "type": "background",
+            "paint": {
+              "background-color": "rgba(0,0,0,0)"
+            }
+          },
+          {
+            "id": "collection-tiles",
+            "type": "raster",
+            "source": "collection-tiles"
+          }
+        ]
+      }, // style URL
+    });
+
+    map.showTileBoundaries = true
+  </script>
+</body>
+
+</html>

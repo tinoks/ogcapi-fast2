@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Items</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+  <script src='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js'></script>
+  <link href='https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css' rel='stylesheet' />
+  <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+  <style>
+    .highlight {
+      background-color: sandybrown !important;
+    }
+  </style>
+</head>
+
+<body class="flex h-screen flex-col max-h-full text-neutral-400">
+
+  <div id="toolbar" class="basis-12	bg-neutral-800 flex">
+    <button class="rounded m-1 p-1 text-sm font-bold text-neutral-200 bg-blue-700 hover:bg-blue-500">ADD ROW</button>
+  </div>
+  <div id="myGrid" class="grow ag-theme-alpine-dark"></div>
+
+
+  <script>
+    let url = new URL(location.href);
+    url.searchParams.set("f", "json")
+    const updateRow = (e)=>{
+      obj = {}
+      obj.id = e.data.id
+      obj[e.colDef.field] = e.newValue;
+
+      console.log(obj)
+      fetch(url.href, {
+        method: 'PATCH',                                                              
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( obj )     
+      })
+    }
+
+    fetch(url.href)
+      .then(e => e.json())
+      .then(sources => {
+        console.log(sources)
+        const columnDefs = Object.keys(sources[0]).map(e => { return { "field": e } });
+        console.log(columnDefs)
+        // specify the data
+        const rowData = sources;
+
+        // let the grid know which columns and what data to use
+        const gridOptions = {
+          columnDefs: columnDefs,
+          rowData: rowData,
+          rowSelection: 'multiple',
+          defaultColDef: {
+            filter: true,
+            sortable: true,
+            editable: true,
+            resizable: true,
+          },
+          onCellValueChanged: e=> updateRow(e)
+        };
+
+        // setup the grid after the page has finished loading
+        const gridDiv = document.querySelector('#myGrid');
+        window.grid = new agGrid.Grid(gridDiv, gridOptions);
+
+
+      })
+
+  </script>
+</body>
+
+</html>

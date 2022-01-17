@@ -1,0 +1,9 @@
+config:
+  target: http://127.0.0.1:3000
+  phases:
+    - duration: 30
+      arrivalRate: 100
+scenarios:
+  - flow:
+      - get:
+          url: "/collections/GEODK_ORTOFOTO_2020/tiles/webmercator/11/1081/642"

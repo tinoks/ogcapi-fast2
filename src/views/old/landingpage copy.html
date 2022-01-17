@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Landingpage</title>
+</head>
+
+<body class="bg-neutral-800 text-neutral-400">
+  <header class="mx-1 flex text-xs items-center justify-between">
+    <div id="breadcrumbs" class="flex cursor-pointer opacity-20 hover:opacity-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 py-0.5	" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      </svg>
+      <a class="cursor-default">home</a>
+    </div>
+    <a class="hover:text-neutral-300 px-1 opacity-20 hover:opacity-100 transition" href="?f=json"
+      target="_blank">JSON</a>
+  </header>
+
+
+
+  <div class="p-10">
+
+    <h1 class="text-3xl font-bold  pb-2">
+      KORTxyz
+    </h1>
+    <div>
+      This is a test dataset for the Open Portrayal Framework thread in the OGC Testbed-15 as well as for the OGC
+      Vector Tiles Pilot Phase 2. The data is OpenStreetMap data from the region of Daraa, Syria, converted to the
+      Topographic Data Store schema of NGA.
+    </div>
+    <br />
+
+    <h2 class="text-3xl font-bold">Links to the main resources</h2>
+    <div class="flex flex-col">
+      <a class="text-blue-500 text-xl" href="collections">Access the data</a>
+      <a class="text-blue-500 text-xl" href="styles">Styles to render the data in maps</a>
+      <a class="text-blue-500 text-xl" href="processes">Processing services</a>
+    </div>
+
+    <br />
+
+    <h2 class="text-3xl font-bold">API information</h2>
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">API description</div>
+      <div class="basis-3/4	flex flex-col">
+            <a class="text-blue-500" href="api?f=json" target="_blank">Definition of the API in OpenAPI 3.0</a>
+            <a class="text-blue-500" href="api?f=html" target="_blank">Documentation of the API</a>
+      </div>
+    </div>
+    <br />
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">API provider</div>
+      <div class="basis-3/4">
+            Clemens Portele, interactive instruments GmbH <br>
+            portele@interactive-instruments.de
+      </div>
+    </div>
+    <br />
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">Data license</div>
+      <div class="basis-3/4">
+        <ul class="list-unstyled">
+          <li>The dataset was provided by the US National Geospatial Intelligence Agency (NGA) for development and
+            testing. For any reuse of the data outside this API, please contact NGA.</li>
+        </ul>
+      </div>
+    </div>
+    <br />
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">Attribution</div>
+      <div class="basis-3/4">
+        <ul class="list-unstyled">
+          <li>US National Geospatial Intelligence Agency (NGA)</li>
+        </ul>
+      </div>
+    </div>
+    <br />
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">Spatial Extent</div>
+      <div class="basis-3/4">
+        <image id="map" width="920" height="480" src="https://via.placeholder.com/920x480"></image>
+      </div>
+    </div>
+    <br />
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">Temporal Extent</div>
+      <div class="basis-3/4">
+        <ul class="list-unstyled">
+          <li>
+            <span id="timeInterval">3/15/09 - 12/28/15</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <br />
+
+    <h2 class="text-3xl font-bold">Expert information</h2>
+
+    <div class="flex">
+      <div class="basis-1/4 font-bold">Additional Links</div>
+      <div class="basis-3/4 flex flex-col">
+        <a class="text-blue-500" href="https://demo.ldproxy.net/daraa/conformance">OGC API conformance classes implemented by this  server</a>
+        <a class="text-blue-500" href="https://demo.ldproxy.net/daraa/resources">Resources for rendering the data in maps</a>
+        <a class="text-blue-500" href="https://demo.ldproxy.net/daraa/tileMatrixSets">List of tile matrix sets implemented by this  API</a>
+      </div>
+    </div>
+
+
+
+  </div>
+</body>
+
+</html>

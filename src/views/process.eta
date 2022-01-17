@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Collections</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-neutral-800 text-neutral-400">
+  <header class="mx-1 flex text-xs items-center justify-between">
+    <div id="breadcrumbs" class="flex cursor-pointer opacity-20 hover:opacity-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 py-0.5	" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      </svg>
+      <a class="hover:text-neutral-100" href="/">home</a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+      <a class="hover:text-neutral-100" href="/processes">processes</a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+      <a class="cursor-default">
+        <%= it.process.id %>
+      </a>
+    </div>
+    <a class="hover:text-neutral-300 px-1 opacity-20 hover:opacity-100 transition" href="?f=json"
+      target="_blank">JSON</a>
+  </header>
+
+  <div id="content" class="p-5">
+    <h1 class="text-4xl mb-2.5">
+      <%= it.process.title %>
+    </h1>
+
+    <% for (const input in it.process.inputs) { %>
+      <div class="flex flex-col mb-8">
+        <div class="text-neutral-300 text-sm mb-2"> <%= it.process.inputs[input].title %></div>
+        <% if(it.process.inputs[input].schema.type == "string") { %> <input id=<%=input %> type="text" class="font-semibold text-lg focus:ring-2 focus:ring-blue-400 outline-none text-neutral-200	bg-neutral-600 pl-2 text-sm h-12"> <% } %> 
+        <% if(it.process.inputs[input].schema.type == "integer") { %> <input id=<%=input %> type="text" class="font-semibold text-lg focus:ring-2 focus:ring-blue-400 outline-none text-neutral-200	bg-neutral-600 pl-2 text-sm h-12"> <% } %> 
+
+        <div class="text-xs text-neutral-400 mt-1	">
+          <%= it.process.inputs[input].description %>
+        </div>
+      </div>
+
+      <% } %>
+      
+
+      <button class="h-12 mb-8 text-neutral-50 bg-blue-700 hover:bg-blue-500 w-3/6"
+          onclick="executeProcess()">SUBMIT</button>
+
+
+      <div class="my-8 flex items-center font-bold text-neutral-50 
+        before:mr-4 before:border-b before:grow before:border-dotted before:border-neutral-600
+        after:ml-4 after:border-b after:grow after:border-dotted after:border-neutral-600">OUTPUT</div>
+      
+      <div id="output"></div>
+
+  </div>
+
+  <script>
+    const executeProcess = async () => {
+      let inputs = {}
+      document.querySelectorAll("input").forEach(input => inputs[input.id] = input.value)
+
+      const rawResponse = await fetch(location.href +'/execution', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({inputs,...{response:"raw"}})
+      })
+
+      const {id,value} = await rawResponse.json();
+
+      const content = `
+      <div class="text-neutral-300 text-sm mb-2">${id}</div>
+      <div class="flex items-center	font-semibold text-lg focus:ring-2 focus:ring-blue-400 outline-none text-neutral-200	bg-neutral-600 pl-2 text-sm h-12">${value}</div>
+        
+      `
+      
+      document.querySelector("#output").innerHTML = content; 
+
+    }
+
+  </script>
+</body>
+
+</html>

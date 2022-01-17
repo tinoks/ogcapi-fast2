@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landingpage</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined&display=swap">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+
+ <style>
+
+    body {
+      margin: 0px;
+      height: 100vh;
+      background: #1E1E1E;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .icons {
+      color: #858585;
+      padding: 10px;
+      margin: 0px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .icons:hover {
+      color: #fff;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .icons.active {
+      color: #fff;
+      border-left: solid white 2px;
+      padding-left: 8px;
+    }
+
+    sidebar {
+      background: #333;
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 40px;
+    }
+
+    row {
+      display: flex;
+      flex: 1 0 0;
+    }  
+    tabs {
+      display: flex;
+      flex: 1 0 0;
+    }
+
+    kortxyz-footer {
+      background: #007ACC;
+      flex: 0 0 20px;
+      display: flex;
+      justify-content: end;
+    }
+
+    kortxyz-footer>.icons {
+      font-size: 14px;
+      padding: 3px;
+      color: #fff;
+    }
+
+    span[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      top: -100%;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <row>
+    <sidebar>
+      <div>
+        <span class="icons material-icons-outlined" title="collections" onclick="showIframe(this.title)">layers</span>
+        <span class="icons material-icons-outlined" title="styles" onclick="showIframe(this.title)">style</span>
+        <span class="icons material-icons-outlined" title="processes" onclick="showIframe(this.title)">developer_board</span>
+      </div>
+  
+      <div>
+        <span class="icons material-icons-outlined">info</span>
+        <span class="icons material-icons-outlined">settings</span>
+      </div>
+    </sidebar>
+
+    <tabs>
+
+    </tabs>
+  </row>
+
+  <kortxyz-footer>
+
+    <span class="icons material-icons-outlined">record_voice_over</span>
+
+    <span class="icons material-icons-outlined">perm_identity</span>
+  </kortxyz-footer>
+
+  <script>
+    const showIframe = (title) => {
+      const tabs = document.querySelector("tabs");
+      const iframe =  `
+      <iframe src="/${title}" width="100%" height="100%" loading="eager" style="border:none;">
+      </iframe>
+
+      `;
+      
+      tabs.innerHTML = iframe; 
+    };
+  </script>
+</body>
+
+</html>

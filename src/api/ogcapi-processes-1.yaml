@@ -1,0 +1,740 @@
+openapi: 3.0.2
+
+info:
+  title: OGCAPI
+  version: 0.0.1
+  description: Implemations of OGC API
+  contact:
+    email: kortxyz@gmail.com
+
+servers:
+    - url: "https://localhost"
+
+tags:
+  - name: Processes
+    description: Processes from the API
+
+paths:
+
+  /processes:
+    get:
+      summary: retrieve the list of available processes
+      description: |
+         The list of processes contains a summary of each process the OGC API - Processes offers, including the link to a more detailed description of the process.
+
+         For more information, see [Section 7.9](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_process_list).
+      operationId: getProcesses
+      tags:
+        - Processes
+      responses:
+        '200':
+          $ref: "#/components/responses/ProcessList"
+
+  /processes/{processID}:
+    get:
+      summary: retrieve a process description
+      description:  |
+         The process description contains information about inputs and outputs and a link to the execution-endpoint for the process. The Core does not mandate the use of a specific process description to specify the interface of a process. That said, the Core requirements class makes the following recommendation:
+
+         Implementations SHOULD consider supporting the OGC process description.
+
+         For more information, see [Section 7.10](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_process_description).
+      operationId: getProcessDescription
+      tags:
+        - Processes
+      parameters:
+        - $ref: "#/components/parameters/processID"
+      responses:
+        '200':
+          $ref: "#/components/responses/ProcessDescription"
+
+
+  /jobs:
+    get:
+      summary: retrieve the list of jobs.
+      description: |
+        Lists available jobs.
+
+        For more information, see [Section 11](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_job_list).
+      operationId: getJobs
+      tags:
+        - Processes
+      responses:
+        '200':
+          $ref: "#/components/responses/JobList"
+
+
+  /processes/{processID}/execution:
+    post:
+      summary: execute a process.
+      description: |
+        Create a new job.
+
+        For more information, see [Section 7.11](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_create_job).
+      operationId: executeJob
+      tags:
+        - Processes
+      parameters:
+        - $ref: "#/components/parameters/processID"
+      requestBody:
+        description: Mandatory execute request JSON
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Execute"
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecuteSync'
+        '201':
+          $ref: "#/components/responses/ExecuteAsync"
+      callbacks:
+        jobCompleted:
+          "{$request.body#/subscriber/successUri}":
+            post:
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/Results"
+              responses:
+                '200':
+                  description: Results received successfully
+
+  /jobs/{jobId}:
+    get:
+      summary: retrieve the status of a job
+      description: |
+        Shows the status of a job.
+
+         For more information, see [Section 7.12](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_retrieve_status_info).
+      operationId: getJobStatus
+      tags:
+        - Processes
+      parameters:
+        - $ref: "#/components/parameters/jobId"
+      responses:
+        '200':
+          $ref: "#/components/responses/Status"
+
+    delete:
+      summary: cancel a job execution, remove a finished job
+      description: |
+        Cancel a job execution and remove it from the jobs list.
+
+        For more information, see [Section 13](https://docs.ogc.org/is/18-062r2/18-062r2.html#Dismiss).
+      operationId: deleteJob
+      tags:
+        - Processes
+      parameters:
+        - $ref: "#/components/parameters/jobId"
+      responses:
+        '200':
+          $ref: "#/components/responses/Status"
+
+  /jobs/{jobId}/results:
+    get:
+      summary: retrieve the result(s) of a job
+      description: |
+        Lists available results of a job. In case of a failure, lists exceptions instead.
+
+        For more information, see [Section 7.13](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_retrieve_job_results).
+      operationId: getJobResults
+      tags:
+        - Processes
+      parameters:
+        - $ref: "#/components/parameters/jobId"
+      responses:
+        '200':
+          $ref: "#/components/schemas/Results"
+
+
+
+components:
+
+  parameters:
+    jobId:
+      name: jobId
+      in: path
+      description: local identifier of a job
+      required: true
+      schema:
+          type: string
+
+    processID:
+      name: processID
+      in: path
+      required: true
+      schema:
+        type: string
+
+        
+
+  responses:
+    ProcessList:
+      description: ProcessList
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProcessList'
+
+    ProcessDescription:
+      description: A process description.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProcessDescription"
+          examples:
+            processDecription:
+              summary: A Process Description example
+              externalValue: "../../examples/json/ProcessDescription.json"
+
+    JobList:
+      description: A list of jobs for this process.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobList"
+
+    ExecuteSync:
+      description: Result of synchronous execution
+      content:
+        /*:
+          schema:
+            oneOf:
+              - type: string
+              - type: number
+              - type: integer
+              - type: object
+                nullable: true
+              - type: array
+              - type: boolean
+              - type: string
+                format: binary
+              - $ref: "#/components/schemas/Results"
+    
+    ExecuteAsync:
+      description: Started asynchronous execution. Created job.
+      headers:
+        Location:
+          schema:
+            type: string
+          description: URL to check the status of the execution/job.
+        Preference-Applied:
+          schema:
+            type: string
+          description: The preference applied to execute the process asynchronously (see. RFC 2740).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StatusInfo"
+
+    Status:
+      description: The status of a job.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StatusInfo"
+
+  schemas:
+    ProcessDescription:
+      allOf:
+      - $ref: "#/components/schemas/ProcessSummary"
+      - type: object
+        properties:
+          inputs:
+            additionalProperties:
+              $ref: "#/components/schemas/InputDescription"
+          outputs:
+            additionalProperties:
+              $ref: "#/components/schemas/OutputDescription"
+
+    ProcessList:
+      type: object
+      required:
+        - processes
+        - links
+      properties:
+        processes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessSummary"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Link"
+
+    ProcessSummary:
+      allOf:
+        - $ref: "#/components/schemas/DescriptionType"
+        - type: object
+          required:
+            - id
+            - version
+          properties:
+            id:
+              type: string
+            version:
+              type: string
+            jobControlOptions:
+              type: array
+              items:
+                $ref: "#/components/schemas/JobControlOptions"
+            outputTransmission:
+              type: array
+              items:
+                $ref: "#/components/schemas/TransmissionMode"
+            links:
+              type: array
+              items:
+                $ref: "#/components/schemas/Link"
+
+    Link:
+      type: object
+      required:
+        - href
+      properties:
+        href:
+          type: string
+        rel:
+          type: string
+          example: service
+        type:
+          type: string
+          example: application/json
+        hreflang:
+          type: string
+          example: en
+        title:
+          type: string
+
+    JobList:
+      type: object
+      required:
+        - jobs
+        - links
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusInfo"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Link"
+
+    StatusInfo:
+      type: object
+      required:
+        - jobID
+        - status
+        - type
+      properties:
+        processID:
+            type: string
+        type:
+            type: string
+            enum:
+              - process
+        jobID:
+            type: string
+        status:
+            $ref: "#/components/schemas/StatusCode"
+        message:
+            type: string
+        created:
+            type: string
+            format: date-time
+        started:
+            type: string
+            format: date-time
+        finished:
+            type: string
+            format: date-time
+        updated:
+            type: string
+            format: date-time
+        progress:
+            type: integer
+            minimum: 0
+            maximum: 100
+        links:
+            type: array
+            items:
+              $ref: "#/components/schemas/Link"
+
+    StatusCode:
+      type: string
+      nullable: false
+      enum:
+        - accepted
+        - running
+        - successful
+        - failed
+        - dismissed
+        
+    Execute:
+      type: object
+      properties:
+        inputs:
+          type: object
+        # this is single line comment.
+        #  additionalProperties:
+        #    oneOf:
+        #      - $ref: "#/components/schemas/InlineOrRefData"
+        #      - type: array
+        #       items:
+        #         $ref: "#/components/schemas/InlineOrRefData"
+        outputs:
+          additionalProperties:
+            $ref: "#/components/schemas/Output"
+        response:
+          type: string
+          enum:
+            - raw
+            - document
+          default:
+            - raw
+        subscriber:
+          $ref: "#/components/schemas/Subscriber"
+
+    Results:
+      additionalProperties:
+        $ref: "#/components/schemas/InlineOrRefData"
+
+    Subscriber:
+      description: |-
+        Optional URIs for callbacks for this job.
+
+        Support for this parameter is not required and the parameter may be
+        removed from the API definition, if conformance class **'callback'**
+        is not listed in the conformance declaration under `/conformance`.
+      type: object
+      required:
+        - successUrl
+      properties:
+        successUri:
+          type: string
+          format: uri
+        inProgressUri:
+          type: string
+          format: uri
+        failedUri:
+          type: string
+          format: uri
+
+    InlineOrRefData:
+      oneOf:
+      - $ref: "#/components/schemas/InputValueNoObject"
+      - $ref: "#/components/schemas/QualifiedInputValue"
+      - $ref: "#/components/schemas/Link"
+
+    InputDescription:
+      allOf:
+      - $ref: "#/components/schemas/DescriptionType"
+      - type: object
+        required:
+          - schema
+        properties:
+          minOccurs:
+            type: integer
+            default: 1
+          maxOccurs:
+            oneOf:
+              - type: integer
+                default: 1
+              - type: string
+                enum:
+                  - "unbounded"
+          schema:
+            $ref: "#/components/schemas/Schema"
+
+    OutputDescription:
+      allOf:
+      - $ref: "#/components/schemas/DescriptionType"
+      - type: object
+        required:
+          - schema
+        properties:
+          schema:
+            $ref: "#/components/schemas/Schema"
+
+    DescriptionType:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: array
+          items:
+            $ref: "#/components/schemas/Metadata"
+        additionalParameters:
+          allOf:
+            - $ref: "#/components/schemas/Metadata"
+            - type: object
+              properties:
+                parameters:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AdditionalParameter"
+
+    JobControlOptions:
+      type: string
+      enum:
+        - sync-execute
+        - async-execute
+        - dismiss
+
+    TransmissionMode:
+      type: string
+      enum:
+        - value
+        - reference
+      default:
+        - value
+
+    Output:
+      type: object
+      properties:
+        format:
+          $ref: "#/components/schemas/Format"
+        transmissionMode:
+          $ref: "#/components/schemas/TransmissionMode"
+
+    Schema:
+      oneOf:
+      - $ref: "#/components/schemas/Reference"
+      - type: object
+        properties:
+          title:
+            type: string
+          multipleOf:
+            type: number
+            minimum: 0
+            exclusiveMinimum: true
+          maximum:
+            type: number
+          exclusiveMaximum:
+            type: boolean
+            default: false
+          minimum:
+            type: number
+          exclusiveMinimum:
+            type: boolean
+            default: false
+          maxLength:
+            type: integer
+            minimum: 0
+          minLength:
+            type: integer
+            minimum: 0
+            default: 0
+          pattern:
+            type: string
+            format: regex
+          maxItems:
+            type: integer
+            minimum: 0
+          minItems:
+            type: integer
+            minimum: 0
+            default: 0
+          uniqueItems:
+            type: boolean
+            default: false
+          maxProperties:
+            type: integer
+            minimum: 0
+          minProperties:
+            type: integer
+            minimum: 0
+            default: 0
+          required:
+            type: array
+            items:
+              type: string
+            minItems: 1
+            uniqueItems: true
+          enum:
+            type: array
+            items: {}
+            minItems: 1
+            uniqueItems: false
+          type:
+            type: string
+            enum:
+              - array
+              - boolean
+              - integer
+              - number
+              - object
+              - string
+          not:
+            oneOf:
+              - $ref: "#/components/schemas/Schema"
+              - $ref: "#/components/schemas/Reference"
+          allOf:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/components/schemas/Schema"
+                - $ref: "#/components/schemas/Reference"
+          oneOf:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/components/schemas/Schema"
+                - $ref: "#/components/schemas/Reference"
+          anyOf:
+            type: array
+            items:
+              oneOf:
+                - $ref: "#/components/schemas/Schema"
+                - $ref: "#/components/schemas/Reference"
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/Schema"
+              - $ref: "#/components/schemas/Reference"
+          properties:
+            type: object
+            additionalProperties:
+              oneOf:
+                - $ref: "#/components/schemas/Schema"
+                - $ref: "#/components/schemas/Reference"
+          additionalProperties:
+            oneOf:
+              - $ref: "#/components/schemas/Schema"
+              - $ref: "#/components/schemas/Reference"
+              - type: boolean
+            default: true
+          description:
+            type: string
+          format:
+            type: string
+          default: {}
+          nullable:
+            type: boolean
+            default: false
+          readOnly:
+            type: boolean
+            default: false
+          writeOnly:
+            type: boolean
+            default: false
+          example: {}
+          deprecated:
+            type: boolean
+            default: false
+          contentMediaType:
+            type: string
+          contentEncoding:
+            type: string
+          contentSchema:
+            type: string
+        additionalProperties: false
+      
+    Reference:
+      type: object
+      required:
+        - "$ref"
+      properties:
+        "$ref":
+          type: string
+          format: uri-reference
+
+    InputValueNoObject:
+      oneOf:
+        - type: string
+        - type: number
+        - type: integer
+        - type: boolean
+        - type: array
+        - $ref: "#/components/schemas/BinaryInputValue"
+        - $ref: "#/components/schemas/BBox"
+
+    QualifiedInputValue:
+      allOf:
+        - $ref: "#/components/schemas/Format"
+        - type: object
+          required:
+            - value
+          properties:
+            value:
+              $ref: "#/components/schemas/InputValue"
+
+    Metadata:
+      type: object
+      properties:
+        title:
+            type: string
+        role:
+            type: string
+        href:
+            type: string
+
+    AdditionalParameter:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+            type: string
+        value:
+            type: array
+            items:
+              oneOf:
+                  - type: string
+                  - type: number
+                  - type: integer
+                  - type: array
+                    items: {}
+                  - type: object
+    Format:
+      type: object
+      properties:
+        mediaType:
+          type: string
+        encoding:
+          type: string
+        schema:
+          oneOf:
+            - type: string
+              format: url
+            - type: object
+            
+    InputValue:
+      oneOf:
+        - $ref: "#/components/schemas/InputValueNoObject"
+        - type: object
+
+    BinaryInputValue:
+      type: string
+
+    BBox:
+      type: object
+      required:
+        - bbox
+      properties:
+        bbox:
+          type: array
+          oneOf:
+            - minItems: 4
+              maxItems: 4
+            - minItems: 6
+              maxItems: 6
+          items:
+            type: number
+        crs:
+          type: string
+          format: uri
+          default: "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+          enum:
+            - "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+            - "http://www.opengis.net/def/crs/OGC/0/CRS84h"

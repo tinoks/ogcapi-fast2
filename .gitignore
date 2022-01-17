@@ -1,0 +1,5 @@
+node_modules
+demodata
+play
+.vscode
+*.sqlite

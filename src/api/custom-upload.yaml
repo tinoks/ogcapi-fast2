@@ -1,0 +1,44 @@
+tags:
+  - name: Upload
+    description: Upload data for use in this API
+
+paths:
+  /uploads:
+    get:
+      operationId: getUploads
+      tags:
+        - Upload
+      summary: get uploads
+      description: Fetches a list of uploaded files
+      "200":
+        description: table
+        content:
+          application/json:
+            type: object
+    post:
+      operationId: uploadfile
+      tags:
+        - Upload
+      summary: upload file
+      description: upload a file to be used by the API
+      "200":
+        description: Upload Successfull
+        
+  /uploads/{file}:
+    delete:
+      operationId: deletefile
+      tags:
+        - Upload
+      summary: delete uploaded file
+      parameters:
+        - $ref: "#/components/parameters/file"
+      description: Delete a file in the upload folder
+      "200":
+        description: Success
+
+components:
+  parameters:
+    file:
+      in: path
+      description: Id of the specific file
+      required: true

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Collections</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-neutral-800 text-neutral-400">
+  <header class="mx-1 flex text-xs items-center justify-between">
+    <div id="breadcrumbs" class="flex cursor-pointer opacity-20 hover:opacity-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 py-0.5	" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      </svg>
+      <a class="hover:text-neutral-100" href="/">home</a>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pt-1	" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+
+      <a class="cursor-default">processses</a>
+    </div>
+    <a class="hover:text-neutral-300 px-1 opacity-20 hover:opacity-100 transition" href="?f=json"
+      target="_blank">JSON</a>
+  </header>
+  <div id="content" class="p-5">
+    <div class="flex justify-between	">
+      <h1 class="text-4xl mb-2.5">
+        Processses
+      </h1>
+      <button class="hover:bg-blue-500 text-xs bg-blue-600 m-2 p-3 text-white flex w-36 justify-between items-center">
+        <div>Add Processs</div><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+          fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+    <input class="my-2 p-4 w-full bg-neutral-700 text-l text-neutral-200 focus:outline-none focus:ring"
+      placeholder="Search for processes" oninput="search(this)">
+
+    <div id="processes" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-6 gap-4 mt-6">
+
+    </div>
+
+  </div>
+  </div>
+  <script>
+    let url = new URL(location.href);
+    url.searchParams.set("f", "json")
+
+    const renderCollections = async () => {
+      const response = await fetch(url.href);
+      const { processes } = await response.json();
+      console.log(processes)
+      const processesGrid = document.querySelector("#processes");
+      const template = processes.map(process => {
+        return `
+          <div class="bg-neutral-700 pl-5 pt-5 h-60 hover:cursor-pointer hover:bg-neutral-600 flex flex-col" onclick="window.location='processes/${process.id}'">
+            <div class="text-xs mb-2">${process.version}</div>
+            <div class="text-neutral-100 hover:underline text-xl mb-4 font-bold truncate">${process.title}</div>
+            <div>${process.description || "No description"}</div>
+            <div id="spacer" class="flex-1"></div>
+          </div>
+          `
+      }).join("")
+      processesGrid.innerHTML = template
+    }
+
+    renderCollections()
+    const search = (e) => {
+      const inputs = e.value.split(" ")
+
+      const q = inputs.filter(e => e[0] != "@").join("+");
+      url.searchParams.set("q",q)
+      /*
+      const keywords = inputs.filter(e => e[0] == "@").join("+");
+      url.searchParams.set("keywords",keywords)
+      */
+     // window.history.pushState({}, null, url.href);
+      renderCollections()
+    }
+  </script>
+</body>
+
+</html>

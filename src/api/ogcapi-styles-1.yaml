@@ -1,0 +1,146 @@
+tags:
+  - name: Styles
+    description: Styles from a collection
+
+paths:
+  /styles:
+    get:
+      operationId: getStyles
+      tags:
+        - Styles
+      summary: get Styles
+      description: get a list of global styles for the API.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/styles"
+
+  /styles/{styleId}:
+    get:
+      operationId: getStyle
+      tags:
+        - Styles
+      summary: get Style
+      description: Fetches features in the collection
+      parameters:
+        - $ref: "#/components/parameters/styleId"
+      responses:
+        "200":
+          description: Style
+          content:
+            application/json:
+              type: object
+
+  /styles/{styleId}/metedata:
+    get:
+      operationId: getStyleMetadata
+      tags:
+        - Styles
+      summary: get metadata for the Style
+      description: Fetches features in the collection
+      parameters:
+        - $ref: "#/components/parameters/styleId"
+      responses:
+        "200":
+          description: Stylemetadata
+          content:
+            application/json:
+              type: object
+
+
+  /collections/{collectionId}/styles:
+    get:
+      operationId: getCollectionStyles
+      tags:
+        - Styles
+      summary: get collectionstyles
+      description: Fetches styles for the collection
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: Styles
+          content:
+            application/json:
+              $ref: "#/components/schemas/styles"
+
+  /collections/{collectionId}/styles/{styleId}:
+    get:
+      operationId: getCollectionStyle
+      tags:
+        - Styles
+      summary: get collectionstyle
+      description: get specific style for the collection
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/styleId"
+      responses:
+        "200":
+          description: Styles
+          content:
+            application/json:
+              type: object
+
+  /collections/{collectionId}/styles/{styleId}/metadata:
+    get:
+      operationId: getCollectionStyleMetadata
+      tags:
+        - Styles
+      summary: get collectionstyle metadata
+      description: retrieves metadata for a specific style 
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/styleId"
+      responses:
+        "200":
+          description: Stylemetadata
+          content:
+            application/json:
+              type: object
+
+
+components:
+
+  parameters:
+
+    styleId:
+      name: styleId
+      in: path
+      description: ID of the style
+      example: "default"
+      required: true
+      schema:
+        type: string
+
+  schemas:
+
+    styles:
+      type: object
+      required:
+        - links
+        - styles
+      properties:
+        links:
+          type: array
+          items:
+            $ref: "ogcapi-common-1.yaml#/components/schemas/link"
+        styles:
+          type: array
+          items:
+            $ref: "#/components/schemas/style"
+
+    style:
+      type: object
+      required:
+        - links
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: "ogcapi-common-1.yaml#/components/schemas/link"

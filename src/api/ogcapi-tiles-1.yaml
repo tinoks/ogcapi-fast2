@@ -1,0 +1,94 @@
+tags:
+  - name: Tiles
+    description: Tiles from a collection
+
+paths:
+  /collections/{collectionId}/tiles:
+    get:
+      operationId: getTilesetList
+      tags:
+        - Tiles
+      summary: get Tileset List
+      description: Fetch a list of tilematrixsets
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+      responses:
+        "200":
+          description: list
+          content:
+            application/json:
+              type: object
+
+  /collections/{collectionId}/tiles/{tileMatrixSetId}:
+    get:
+      operationId: getTileJSON
+      tags:
+        - Tiles
+      summary: get TileMatrixSet
+      description: Fetch description of a specific tilematrixset
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/tileMatrixSetId"
+      responses:
+        "200":
+          description: tilejson
+          content:
+            application/json:
+              type: object
+
+  /collections/{collectionId}/tiles/{tileMatrixSetId}/{tileMatrix}/{tileRow}/{tileCol}:
+    get:
+      operationId: getTile
+      tags:
+        - Tiles
+      summary: get Tile
+      description: Fetches a single tile from a collection
+      parameters:
+        - $ref: "ogcapi-common-1.yaml#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/tileMatrixSetId"
+        - $ref: "#/components/parameters/tileMatrix"
+        - $ref: "#/components/parameters/tileRow"
+        - $ref: "#/components/parameters/tileCol"
+      responses:
+        "200":
+          description: Tile
+          content:
+            image/jpg:
+              type: object
+
+components:
+
+  parameters:
+
+    tileMatrixSetId:
+      name: tileMatrixSetId
+      in: path
+      description: ID of the tileMatrixset
+      example: "WebMercatorQuad"
+      required: true
+      schema:
+        type: string
+
+    tileMatrix:
+      name: tileMatrix
+      in: path
+      description: z value for the tile
+      required: true
+      schema:
+        type: number
+
+    tileRow:
+      name: tileRow
+      in: path
+      description: x value for the tile
+      required: true
+      schema:
+        type: number
+
+    tileCol:
+      name: tileCol
+      in: path
+      description: y value for the tile
+      required: true
+      schema:
+        type: number

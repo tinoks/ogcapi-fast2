@@ -1,0 +1,26 @@
+tags:
+  - name: Config
+    description: Config for the API
+
+paths:
+  /config/{table}:
+    get:
+      operationId: getTable
+      tags:
+        - Config
+      summary: get Table
+      description: Fetches a table in the configfile
+      "200":
+        description: table
+        content:
+          application/json:
+            type: object
+    patch:
+      operationId: updateTable
+      tags:
+        - Config
+      summary: update Table
+      description: update part of the table
+      "200":
+        description: Update Succesfull
+        
