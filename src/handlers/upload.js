@@ -7,7 +7,7 @@ function formatBytes(a,b=2,k=1024){with(Math){let d=floor(log(a)/log(k));return 
 
 const getUploads = async (req, reply, fastify) => {
   const { f } = req.query;
-  console.log("uploadfolder:", uploadfolder);
+  console.log("uploadfolder:", process.env);
   const files = await fs.promises.readdir(uploadfolder)
   const fileStats  = files.map(file=> {
     const filePath = path.resolve(uploadfolder, file);
