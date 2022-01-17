@@ -1,4 +1,4 @@
-const { baseurl, title, desc,uploadfolder } = process.env;
+const { baseurl, title, desc,UPLOADFOLDER } = process.env;
 const fs = require("fs");
 const path = require('path');
 
@@ -7,10 +7,10 @@ function formatBytes(a,b=2,k=1024){with(Math){let d=floor(log(a)/log(k));return 
 
 const getUploads = async (req, reply, fastify) => {
   const { f } = req.query;
-  console.log("uploadfolder:", process.env);
-  const files = await fs.promises.readdir(uploadfolder)
+  console.log("uploadfolder:", UPLOADFOLDER);
+  const files = await fs.promises.readdir(UPLOADFOLDER)
   const fileStats  = files.map(file=> {
-    const filePath = path.resolve(uploadfolder, file);
+    const filePath = path.resolve(UPLOADFOLDER, file);
     const {ext} = path.parse(filePath);
     const {mtime, size} = fs.statSync(filePath);
     return {
