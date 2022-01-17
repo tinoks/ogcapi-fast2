@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:14
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,4 +16,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 80
-CMD [ "node", ".\src\index" ]
+CMD [ "node", "index" ]
