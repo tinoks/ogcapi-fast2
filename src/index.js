@@ -16,7 +16,7 @@ const server = require('./configuration/server')({
 
 const start = async () => {
   try {
-    const address = await server.listen(process.env.PORT || "8080")
+    const address = await server.listen(process.env.PORT || "8080",'0.0.0.0')
 
     console.info(`server listening on ${address} and worker ${process.pid}`)
   } catch (err) {
