@@ -18,7 +18,7 @@ module.exports = {
     console.log("Saved config database: " + file);
 
     configdb = require("better-sqlite3")(file);
-    configdb.loadExtension("./mod_spatialite.dll");
+    configdb.loadExtension("./mod_spatialite");
     console.log("Loaded config database: " + file);
     return true;
 
@@ -31,7 +31,7 @@ module.exports = {
     }
     else {
       configdb = require("better-sqlite3")(file);
-      configdb.loadExtension("./mod_spatialite.dll");
+      configdb.loadExtension("./mod_spatialite");
       console.log("Loaded config database: " + file);
       return true;
     }
